@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:nyoba2/service/login_service.dart';
 import 'package:nyoba2/ui/beranda.dart';
 
 class Login extends StatefulWidget {
@@ -70,9 +71,30 @@ class _LoginState extends State<Login> {
         width: MediaQuery.of(context).size.width,
         child: ElevatedButton(
             child: Text("Login"),
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Beranda()));
+            onPressed: () async {
+              String username = _usernameCtrl.text;
+              String password = _passwordCtrl.text;
+              await LoginService().Login(username, password).then((value) {
+                if (value == true) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Beranda()));
+                } else {
+                  AlertDialog alertDialog = AlertDialog(
+                    content: const Text("Username atau password Tidak Valid"),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("OK"),
+                        style: ElevatedButton.styleFrom(primary: Colors.green),
+                      )
+                    ],
+                  );
+                  showDialog(
+                      context: context, builder: (context) => alertDialog);
+                }
+              });
             }));
   }
 }
